@@ -3,20 +3,31 @@ from models import TaskModel
 from fastapi import FastAPI
 from bson import ObjectId
 from fastapi import HTTPException
+from fastapi.middleware.cors import CORSMiddleware 
+# CORSMiddleware allows browser access
 
 # creating the app instance
 app = FastAPI(title="Taskersky | Personal Task Tracking")
+
+# allow browser to talk with Python server
+app.add_middleware(
+    CORSMiddleware,
+    # allowing origins, methods(get,post,put,delete) and headers
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # this is a simple GET route, 'async' meaning it can handle other requests while waiting
 @app.get("/")
 async def root():
     return {"status": "Taskersky is up and running!"}
 
-@app.post("/tasks/write")
+@app.post("/tasks/create")
 async def create_task(task: TaskModel):
     # 'task.dict()' converts the Pydantic objects into Python dictionary
     # MongoDB only understands dict/JSON, not Pydantic classes
-    task_dict = task.dict()
+    task_dict = task.dict() 
 
     # 'await' tells Python to send to MongoDB and wait until it's saved
     new_task = await collection.insert_one(task_dict)
@@ -26,7 +37,7 @@ async def create_task(task: TaskModel):
         "message": "Successfully saved to the database"
     }
 
-@app.get("/tasks/read")
+@app.get("/tasks")
 async def get_tasks():
     # create a cursor to find all documents in `tasks`
     # find() prepares the query
