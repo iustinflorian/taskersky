@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: taskersky_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    restart: always
+
+  frontend:
+    image: nginx:alpine
+    container_name: taskersky_web
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/usr/share/nginx/html
