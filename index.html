@@ -4,89 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Taskersky</title>
-    <style>
-        .task-card { 
-            background: #fff; 
-            padding: 15px; 
-            margin-bottom: 10px; 
-            border: 1px solid #eee; 
-            border-radius: 8px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-            
-            transition: 0.3s; 
-        }
-        .buttons-group {
-            display: flex;
-            gap: 5px;
-        }
-        .task-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .done { text-decoration: line-through; color: #bdc3c7; }
-        .btn-done { background: #2ecc71; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; margin-left: 10px; }
-        .btn-delete { background: #e74c3c; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; margin-left: 10px; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Taskersky | Personal Task Tracker</h1>
+    <button class="btn-open" onclick="toggleModal(true)">+ Add New Task</button>
+
+    <div id="task-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2>New task</h2>
+            <input type="text" id="task-title" placeholder="Task Title (min 3 chars)">
+            <textarea id="task-desc" placeholder="Description (optional)"></textarea>
+            
+            <div class="modal-buttons">
+                <button class="btn-save" onclick="createTask()">Save Task</button>
+                <button class="btn-cancel" onclick="toggleModal(false)">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div id="tasks-container">Loading tasks..</div>
-
-    <script>
-        const API_URL = "http://127.0.0.1:8000/tasks";
-
-        async function loadTasks(){
-            const response = await fetch(API_URL);
-            const tasks = await response.json();
-
-            const container = document.getElementById('tasks-container');
-            container.innerHTML = ""; // this clears the loading
-
-            tasks.forEach(task =>{
-                const div = document.createElement('div');
-                div.className = 'task-card';
-                // if class is completed, it applies `done` class
-                const titleClass = task.completed ? 'done' : '';
-                
-                div.innerHTML = `
-                    <div>
-                        <span class="${titleClass}">
-                            <strong>
-                                ${task.title}
-                            </strong>
-                        </span>
-                        
-                        ${!task.completed ? `
-                            <button class="btn-done" onclick="completeTask('${task._id}')">
-                                DONE!
-                            </button>
-                        ` : ''}
-                        <button class="btn-delete" onclick="deleteTask('${task._id}')">DELETE!</button>
-                    </div>
-                    <div>
-                        <p>${task.description}</p>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        async function createTask(task) {
-            // to do a `create task` form later
-        }
-
-        async function completeTask(id) {
-            await fetch(`${API_URL}/update/${id}`, {method:'PUT'});
-            loadTasks();
-        }
-
-        async function deleteTask(id){
-            if(confirm("Confirm task deletion. Are you sure?")){
-                await fetch(`${API_URL}/delete/${id}`, {method:'DELETE'});
-                loadTasks();
-            }
-        }
-
-        loadTasks();
-    </script>
+    <script src="scripts.js"></script>
 </body>
 </html>
