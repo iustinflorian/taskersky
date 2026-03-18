@@ -1,5 +1,5 @@
 # Taskersky | Personal task tracker
-### This projects was made in order to learn python and aid in time management
+### This projects was made in order to learn python and improve my time management
 
 <table style="width: 100%;">
   <tr>
